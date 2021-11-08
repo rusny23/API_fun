@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+	<title>Weather API</title>
+	<meta charset="utf-8"/>
+	<script>
+		function getWeather() {
+			/* Step 1: Make instance of request object...
+			...to make HTTP request after page is loaded*/
+			request = new XMLHttpRequest();
+			console.log("1 - request object created");
+ 
+			// Step 2: Set the URL for the AJAX request to be the JSON file
+ 
+		    request.open("GET", "https://api.weather.gov/gridpoints/BOX/68,78/forecast", true)
+
+			console.log("2 - opened request file");
+ 
+			// Step 3: set up event handler/callback
+
+			request.onreadystatechange = function() {
+				console.log("3 - readystatechange event fired.");
+ 
+				if (request.readyState == 4 && request.status == 200) {
+
+					// Step 5: wait for done + success
+					console.log("5 - response received");
+					result = request.responseText;
+					alert(result);
+					weather = JSON.parse(result);
+					
+					document.getElementById("data").innerHTML =
+                    "Temperature today at Tufts: " + weather["properties"]["periods"][0]["temperature"] + "</br>"
+                    +"Temperature tonight at Tufts: " + weather["properties"]["periods"][1]["temperature"] + "</br>"
+                    + "</br>" + "The API I selected is the government weather API that serves to provide the weather " +
+                    "at certain areas using grid points." + "</br>" + "</br>" + "I found it at: https://www.weather.gov/documentation/services-web-api"
+                    + "</br>" + "</br>" + "For this API request, I requested the location of Tufts using longitude and latitude and from there, I " + 
+                    "recieved gridpoints I could use for more detailed information. I chose the first and second weather forecast times in the 'periods' " +
+                    "array and I speficically asked for the temperature within each of those time in the array." + "</br>" + "</br>" +
+                    "This API can be helpful for apps that faliciate traveling options as they could relay any bad weather alerts. " +
+                    "It would also be good for event planner apps to let customers know the best days to conduct outdoor activities."; 
+
+				}
+				else if (request.readyState == 4 && request.status != 200) {
+
+					document.getElementById("data").innerHTML = "Something is wrong!  Check the logs to see where this went off the rails";
+
+				}
+
+				else if (request.readyState == 3) {
+
+					document.getElementById("data").innerHTML = "Too soon!  Try again";
+
+				}
+
+			}
+		// Step 4: fire off the HTTP request
+			request.send();
+			console.log("4 - Request sent");
+		}
+	</script>
+</head>
+
+
+<body onload="getWeather()">
+	<h1>Weather</h1>
+	<div id="data">Loading...</div>
+</body>
+</html>
